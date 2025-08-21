@@ -3,14 +3,8 @@ declare module "axios";
 
 declare module "*.css";
 
-// declare module "*.module.css" {
-//   const classes: { [key: string]: string };
-//   export default classes;
-// }
-
-
 interface ImportMetaEnv {
-	readonly VITE_TMDB_TOKEN: string;
+	readonly VITE_NOTEHUB_TOKEN: string;
 }
 
 interface ImportMeta {
