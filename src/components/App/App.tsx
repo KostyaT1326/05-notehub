@@ -8,6 +8,7 @@ import Modal from '../Modal/Modal';
 import NoteForm from '../NoteForm/NoteForm';
 import { useQuery } from '@tanstack/react-query';
 import { fetchNotes } from '../../services/noteService';
+import type { Note } from '../../types/note';
 
 import { useDebounce } from '../../hooks/useDebounce';
 
@@ -22,14 +23,6 @@ const App: React.FC = () => {
 
   const debouncedQuery = useDebounce(query, 500);
 
-  type Note = {
-    id: string;
-    title: string;
-    content: string;
-    tag: string;
-    createdAt: string;
-    updatedAt: string;
-  };
   type FetchNotesResponse = { notes: Note[]; totalPages: number };
   const { data } = useQuery<FetchNotesResponse>({
     queryKey: ['notes', { page, search: debouncedQuery }],

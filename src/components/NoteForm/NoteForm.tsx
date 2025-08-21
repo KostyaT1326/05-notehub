@@ -1,6 +1,7 @@
 
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useRef } from 'react';
 import { createNote } from '../../services/noteService';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import type { FormikHelpers } from 'formik';
@@ -8,7 +9,7 @@ import * as Yup from 'yup';
 import css from './NoteForm.module.css';
 
 interface NoteFormProps {
-  onCancel?: () => void;
+  onCancel: () => void;
 }
 
 const tagOptions = ["Todo", "Work", "Personal", "Meeting", "Shopping"];
@@ -22,11 +23,15 @@ const validationSchema = Yup.object({
 
 const NoteForm: React.FC<NoteFormProps> = ({ onCancel }) => {
   const queryClient = useQueryClient();
+  const resetFormRef = useRef<(() => void) | null>(null);
   const mutation = useMutation({
     mutationFn: createNote,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['notes'] });
-      if (onCancel) onCancel();
+      if (resetFormRef.current) {
+        resetFormRef.current();
+      }
+      onCancel();
     },
   });
 
@@ -38,8 +43,8 @@ const NoteForm: React.FC<NoteFormProps> = ({ onCancel }) => {
         values: { title: string; content: string; tag: string },
         { resetForm }: FormikHelpers<{ title: string; content: string; tag: string }>
       ) => {
+        resetFormRef.current = resetForm;
         mutation.mutate(values);
-        resetForm();
       }}
     >
       {({ isSubmitting, isValid }: { isSubmitting: boolean; isValid: boolean }) => (
